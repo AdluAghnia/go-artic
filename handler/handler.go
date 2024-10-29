@@ -13,7 +13,14 @@ import (
 )
 
 func IndexHandler(c *fiber.Ctx) error {
-	return c.Render("index", nil, "layouts/main")
+	articles, err := models.GetArticles()
+	if err != nil {
+		log.Println(err)
+		return c.SendString(err.Error())
+	}
+	return c.Render("index", fiber.Map{
+		"Articles": articles,
+	}, "layouts/main")
 }
 
 func CreateArticleHandler(c *fiber.Ctx) error {

@@ -1,22 +1,25 @@
 {{ define "show-article" }}
-<h4>List of articels</h4>
-<h4>List of articels</h4>
-<h4>List of articels</h4>
-<h4>List of articels</h4>
-<h4>List of articels</h4>
-<h4>List of articels</h4>
+<div>
+	{{range .Articles}}
+	<div>
+		<h2>{{.Title}}</h2>
+		<p>{{.Content}}</p>
+		<img src="{{.Image}}" alt="{{.Title}}" style="width:100%; height:auto;">
+	</div>
+	{{end}}
+</div>
 {{ end }}
 
 
 {{ define "create-article" }}
-	<form hx-post="/article" hx-swap="innerHTML" hx-target="this" enctype="multipart/form-data">
-		<span>Title</span>
-		<input type="text" name="title">
-		<span>Content</span>
-		<input type="content" name="content">
-		<span>Picture</span>
-		<input type="file" name="picture">
+<form hx-post="/article" hx-swap="innerHTML" hx-target="this" enctype="multipart/form-data">
+	<span>Title</span>
+	<input type="text" name="title">
+	<span>Content</span>
+	<input type="content" name="content">
+	<span>Picture</span>
+	<input type="file" name="picture">
 
-		<button type="submit"> Create </button>
-	</form>
+	<button type="submit"> Create </button>
+</form>
 {{ end }}
