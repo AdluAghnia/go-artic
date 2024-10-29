@@ -15,6 +15,8 @@ func main() {
 		Views: engine,
 	})
 
+	app.Static("/public", "./public")
+
 	routes.SetupRouter(app)
 	fmt.Println("I'm Batman")
 

@@ -9,14 +9,14 @@
 
 
 {{ define "create-article" }}
-	<form>
+	<form hx-post="/article" hx-swap="innerHTML" hx-target="this" enctype="multipart/form-data">
 		<span>Title</span>
 		<input type="text" name="title">
 		<span>Content</span>
 		<input type="content" name="content">
 		<span>Picture</span>
 		<input type="file" name="picture">
-		
+
 		<button type="submit"> Create </button>
 	</form>
 {{ end }}
