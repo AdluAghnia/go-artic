@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"path/filepath"
 	"time"
 
 	"github.com/AdluAghnia/go-artic/db"
@@ -23,6 +24,15 @@ func IndexHandler(c *fiber.Ctx) error {
 	}, "layouts/main")
 }
 
+func ShowArticle(c *fiber.Ctx) error {
+	article, err := models.GetArticleByID(c.Params("id"))
+	if err != nil {
+		log.Println(err)
+		return c.SendString(err.Error())
+	}
+	return c.Render("show-article", article, "layouts/main")
+}
+
 func CreateArticleHandler(c *fiber.Ctx) error {
 	return c.Render("create-article", nil)
 }
@@ -37,11 +47,14 @@ func SaveArticleHandler(c *fiber.Ctx) error {
 		return c.SendString(err.Error())
 	}
 
+	// Get the file extension
+	extension := filepath.Ext(picture.Filename)
+
 	// Hash the filename with SHA-256 and append timestamp for uniqueness
 	hasher := sha256.New()
 	hasher.Write([]byte(picture.Filename + time.Now().String()))
 	encryptedFilename := hex.EncodeToString(hasher.Sum(nil))
-	imagePath := fmt.Sprintf("./public/images/%s%s", encryptedFilename, ".jpg")
+	imagePath := fmt.Sprintf("./public/images/%s%s", encryptedFilename, extension)
 
 	if err := c.SaveFile(picture, imagePath); err != nil {
 		log.Println(err)
@@ -51,7 +64,7 @@ func SaveArticleHandler(c *fiber.Ctx) error {
 	article := models.NewArticle(
 		title,
 		content,
-		imagePath,
+		encryptedFilename+extension,
 	)
 
 	db, err := db.NewDB()
@@ -65,5 +78,5 @@ func SaveArticleHandler(c *fiber.Ctx) error {
 		return c.SendString(err.Error())
 	}
 
-	return nil
+	return c.Render("article", article)
 }

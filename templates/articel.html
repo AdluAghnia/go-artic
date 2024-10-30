@@ -1,25 +1,37 @@
-{{ define "show-article" }}
-<div>
+{{ define "list-article" }}
+<div id="article-list">
 	{{range .Articles}}
-	<div>
-		<h2>{{.Title}}</h2>
-		<p>{{.Content}}</p>
-		<img src="{{.Image}}" alt="{{.Title}}" style="width:100%; height:auto;">
-	</div>
+		{{ template "article" . }}
 	{{end}}
 </div>
 {{ end }}
 
 
+{{ define "article" }}
+	<a href="/article/{{ .ID }}">
+		<div>
+			<h2>{{.Title}}</h2>
+			<p>{{.Content}}</p>
+		</div>
+	</a>
+{{ end }}
+
 {{ define "create-article" }}
-<form hx-post="/article" hx-swap="innerHTML" hx-target="this" enctype="multipart/form-data">
+<form hx-post="/article" hx-swap="afterbegin" hx-target="#article-list" hx- enctype="multipart/form-data">
 	<span>Title</span>
-	<input type="text" name="title">
+	<input type="text" name="title" value="" required>
 	<span>Content</span>
-	<input type="content" name="content">
+	<input type="content" name="content" value="" required>
 	<span>Picture</span>
-	<input type="file" name="picture">
+	<input type="file" name="picture" value="" required>
 
 	<button type="submit"> Create </button>
 </form>
 {{ end }}
+
+{{ define "show-article" }}
+    <h2>{{.Title}}</h2>
+    <p>{{.Content}}</p>
+    <img src="/public/images/{{.Image}}" alt="{{.Title}}" style="width:100%; height:auto;">
+{{ end }}
+

@@ -8,6 +8,6 @@ import (
 func SetupRouter(app *fiber.App) {
 	app.Get("/", handler.IndexHandler)
 	app.Get("/article/create", handler.CreateArticleHandler)
-
+	app.Get("/article/:id", handler.ShowArticle)
 	app.Post("/article", handler.SaveArticleHandler)
 }

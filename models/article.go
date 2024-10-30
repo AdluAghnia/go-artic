@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/AdluAghnia/go-artic/db"
 	"github.com/google/uuid"
@@ -31,6 +32,25 @@ func (a *Article) SaveArticle(db *sql.DB) error {
 	}
 
 	return nil
+}
+
+func GetArticleByID(id string) (*Article, error) {
+	db, err := db.NewDB()
+	if err != nil {
+		return nil, err
+	}
+
+	var article Article
+	query := db.QueryRow("SELECT * FROM article WHERE id = ?", id)
+	err = query.Scan(&article.ID, &article.Title, &article.Content, &article.Image)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("Article Not Found")
+		}
+		return nil, err
+	}
+
+	return &article, nil
 }
 
 func GetArticles() ([]*Article, error) {
