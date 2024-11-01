@@ -9,15 +9,23 @@ import (
 )
 
 const (
-	create = `
+	createArticleTable = `
 	CREATE TABLE IF NOT EXISTS article (
 		id VARCHAR(255) NOT NULL,
 		title VARCHAR(255) NOT NULL,
 		content TEXT NOT NULL,
 		image VARCHAR(256) NOT NULL,
 		PRIMARY KEY (id)
-	);
-	`
+	);`
+
+	createUserTable = `
+	CREATE TABLE IF NOT EXISTS user (
+		id VARCHAR(255) NOT NULL,
+		username VARCHAR(255) NOT NULL,
+	    email VARCHAR(255) NOT NULL,
+		password VARCHAR(256) NOT NULL,
+		PRIMARY KEY (id)
+	);`
 )
 
 func NewDB() (*sql.DB, error) {
@@ -39,9 +47,13 @@ func NewDB() (*sql.DB, error) {
 		return nil, err
 	}
 
-	if _, err := db.Exec(create); err != nil {
+	if _, err := db.Exec(createArticleTable); err != nil {
 		return nil, err
 	}
 
+	if _, err := db.Exec(createUserTable); err != nil {
+		return nil, err
+	}	
+	
 	return db, nil
 }

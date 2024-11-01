@@ -30,6 +30,7 @@ func (a *Article) SaveArticle(db *sql.DB) error {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 
 	return nil
 }
@@ -39,6 +40,7 @@ func GetArticleByID(id string) (*Article, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer db.Close()
 
 	var article Article
 	query := db.QueryRow("SELECT * FROM article WHERE id = ?", id)
@@ -58,6 +60,7 @@ func GetArticles() ([]*Article, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer db.Close()
 
 	rows, err := db.Query("SELECT id, title, content, image FROM article")
 	if err != nil {
