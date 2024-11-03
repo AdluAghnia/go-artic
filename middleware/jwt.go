@@ -36,7 +36,7 @@ func JWTMiddleware() fiber.Handler {
 
 
 		if tokenString == "" {
-			return c.Status(fiber.StatusUnauthorized).SendString("Missing or invalid JWT")
+			return c.Status(fiber.StatusUnauthorized).Redirect("/login")
 		}
 
 		token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
@@ -44,12 +44,12 @@ func JWTMiddleware() fiber.Handler {
 		})
 
 		if err != nil || !token.Valid {
-			return c.Status(fiber.StatusUnauthorized).SendString("Your Token is not valid")
+			return c.Status(fiber.StatusUnauthorized).Redirect("/login")
 		}
 
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
-			return c.Status(fiber.StatusUnauthorized).SendString("Claim token failed")
+			return c.Status(fiber.StatusUnauthorized).Redirect("/login")
 		}
 
 		userID := claims["id"]
