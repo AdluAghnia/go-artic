@@ -14,4 +14,7 @@ func SetupRouter(app *fiber.App) {
 
 	app.Get("/register", handler.RegisterViewHandler)
 	app.Post("/auth/register", handler.RegisterHandler)
+
+	app.Get("/login", handler.LoginViewHandler)
+	app.Post("/auth/login", handler.LoginHandler)
 }

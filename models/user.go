@@ -29,6 +29,25 @@ func NewUser(username, email, password string) *User {
 	}
 }
 
+func GetUserByEmail(email string) (*User, error) {
+	db, err := db.NewDB()
+	if err != nil {
+		return nil, err
+	}
+
+	var user User
+	query := db.QueryRow("SELECT * FROM user WHERE email = ?", email)
+	err = query.Scan(&user.ID, &user.Username, &user.Email, &user.Password)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errors.New("Article Not Found")
+		}
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 func usernameValidation(username string) bool {
 	return len(username) >= 3
 }
@@ -75,7 +94,7 @@ func (u *User) ValidateRegisterUser() (bool, map[string]error) {
 		errs["email"] = errors.New("Email is not valid")
 		isValid = false
 	}
-	
+
 	email_exist, err := emailExist(u.Email)
 	if err != nil {
 		log.Println(err)
@@ -103,13 +122,21 @@ func HashPassword(password string) (string, error) {
 	return string(bytes), nil
 }
 
+func (u *User) ComparePassword(password string) (bool, error) {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 func (u User) SaveUser() error {
 	db, err := db.NewDB()
 	if err != nil {
 		return err
 	}
 	defer db.Close()
-	
+
 	hash_password, err := HashPassword(u.Password)
 
 	_, err = db.Exec("INSERT INTO user (id, username, email, password) VALUE (?, ?, ?, ?)", u.ID, u.Username, u.Email, hash_password)

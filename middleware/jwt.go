@@ -10,14 +10,15 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var jwtSecretKey string
+var jwtSecretKey []byte
 
 func GenerateJWTKey(user *models.User) (string, error) {
 	err := godotenv.Load()
-	jwtSecretKey = os.Getenv("SECRET_KEY")
 	if err != nil {
 		return "", err
 	}
+
+	jwtSecretKey = []byte(os.Getenv("SECRET_KEY"))
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"id":    user.ID,
